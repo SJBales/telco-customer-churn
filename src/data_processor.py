@@ -34,7 +34,7 @@ class telcoDataCleaner:
         clean_df = self._identify_missing_values_(clean_df)
 
         # filling missing values
-        clean_df = self._fill_missing_values_(clean_df, "TotalCharges")
+        clean_df = self._fill_missing_values_(clean_df, ["TotalCharges", "Churn"])
 
         # Prepping predictors and target column
         preds, target = self._prep_data_(clean_df)
@@ -117,11 +117,11 @@ class telcoDataCleaner:
         return df
 
     # Drop or fill missing values
-    def _fill_missing_values_(self, df: pd.DataFrame, col) -> pd.DataFrame:
+    def _fill_missing_values_(self, df: pd.DataFrame, cols) -> pd.DataFrame:
 
-        df[col].fillna(df[col].median())
-
-        logger.info(f"Filled missing values in {col} with medians")
+        for col in [cols]:
+            df[col].fillna(df[col].median())
+            logger.info(f"Filled missing values in {col} with medians")
 
         return df
 
