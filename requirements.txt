@@ -5,3 +5,4 @@ seaborn
 kagglehub
 kagglehub[pandas-datasets]
 scikit-learn
+scipy
