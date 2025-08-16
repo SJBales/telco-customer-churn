@@ -4,4 +4,4 @@ matplotlib
 seaborn
 kagglehub
 kagglehub[pandas-datasets]
-mypy
+scikit-learn
