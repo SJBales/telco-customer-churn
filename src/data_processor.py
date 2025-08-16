@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+from typing import Tuple, Dict, Union
 
 # Configuring the logger
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(message)s")
@@ -14,7 +15,9 @@ class telcoDataCleaner:
         self.Target_column = "Churn"
 
     # creating a master method to run all the sub-cleaning functions
-    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
+    def clean_data(
+        self, df: pd.DataFrame
+    ) -> Dict[str, Union[pd.DataFrame | pd.Series]]:
 
         clean_df = df.copy()
 
@@ -30,7 +33,10 @@ class telcoDataCleaner:
         # cleaning missing values
         clean_df = self._identify_missing_values_(clean_df)
 
-        return clean_df
+        # Prepping predictors and target column
+        preds, target = self._prep_data_(clean_df)
+
+        return {"clean_table": clean_df, "predictors": preds, "target": target}
 
     # Converting numeric data types
     def _convert_data_types_(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -106,6 +112,23 @@ class telcoDataCleaner:
         logger.info(f"Columns with missing values: {missing_value_summary}")
 
         return df
+
+    # Prepping the table for fitting
+    def _prep_data_(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
+
+        predictor_cols = [
+            "gender",
+            "SeniorCitizen",
+            "Partner",
+            "Dependents",
+            "tenure",
+            "PhoneService",
+            "TotalCharges",
+            "MonthlyCharges",
+        ]
+        predictors = df.loc[:, predictor_cols]
+
+        return predictors, df.loc[:, self.Target_column]
 
 
 def processTelcoData(raw_df):
