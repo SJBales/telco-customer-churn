@@ -119,8 +119,8 @@ class telcoDataCleaner:
     # Drop or fill missing values
     def _fill_missing_values_(self, df: pd.DataFrame, cols) -> pd.DataFrame:
 
-        for col in [cols]:
-            df[col].fillna(df[col].median())
+        for col in cols:
+            df[col] = df[col].fillna(df[col].median())
             logger.info(f"Filled missing values in {col} with medians")
 
         return df
