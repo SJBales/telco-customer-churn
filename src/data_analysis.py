@@ -39,7 +39,5 @@ cv_results = cross_validate(
     n_jobs=1,
 )
 
-# logging.INFO("Cross validation ran successfully")
-
 # logging the results
 logger.info(cv_results["test_accuracy"])
