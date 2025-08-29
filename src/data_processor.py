@@ -77,6 +77,9 @@ class telcoDataCleaner:
         df["gender"] = df["gender"].map({"Male": 1, "Female": 0})
         logger.info("Converting gender")
 
+        df['InternetService'] = df['InternetService'].map({'DSL': 1, 'Fiber optic': 2, 'No': 0})
+        logger.info("Converting Internet Service")
+
         return df
 
     # Detecting outliers
