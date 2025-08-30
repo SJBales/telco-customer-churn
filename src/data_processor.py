@@ -66,6 +66,8 @@ class telcoDataCleaner:
             "StreamingTV",
             "StreamingMovies",
             "OnlineSecurity",
+            "OnlineBackup",
+            "PaperlessBilling"
         ]
         for col in binary_columns:
             if col in df.columns:
@@ -77,8 +79,20 @@ class telcoDataCleaner:
         df["gender"] = df["gender"].map({"Male": 1, "Female": 0})
         logger.info("Converting gender")
 
+        # Converting Internet Service to ordinal
         df['InternetService'] = df['InternetService'].map({'DSL': 1, 'Fiber optic': 2, 'No': 0})
         logger.info("Converting Internet Service")
+
+        # Mutliple lines of service to binary
+        df["MultipleLines"] = df["MultipleLines"].map({"Yes": 1, "No": 0, "No phone service": 0})
+        logger.info("Converting Multiple Lines")
+
+        # Converting Contract
+        df = pd.get_dummies(df,
+                            columns=['Contract', 'PaymentMethod'],
+                            drop_first=True,
+                            dtype=float)
+        logger.info("Created dummy columns from contract type and Payment Method")
 
         return df
 
@@ -131,17 +145,9 @@ class telcoDataCleaner:
     # Prepping the table for fitting
     def _prep_data_(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
 
-        predictor_cols = [
-            "gender",
-            "SeniorCitizen",
-            "Partner",
-            "Dependents",
-            "tenure",
-            "PhoneService",
-            "TotalCharges",
-            "MonthlyCharges",
-        ]
-        predictors = df.loc[:, predictor_cols]
+        exclude_cols = ["Churn", "customerID"]
+        
+        predictors = df.loc[:, ~df.columns.isin(exclude_cols)]
 
         return predictors, df.loc[:, self.Target_column]
 

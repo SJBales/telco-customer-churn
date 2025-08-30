@@ -6,3 +6,4 @@ kagglehub
 kagglehub[pandas-datasets]
 scikit-learn
 scipy
+statsmodels
