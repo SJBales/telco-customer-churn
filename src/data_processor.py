@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-from typing import Tuple, Dict, Union
+from typing import Tuple, Dict, Union, List
 
 # Configuring the logger
 logging.basicConfig(level=logging.INFO, format="%(name)s - %(message)s")
@@ -34,12 +34,19 @@ class telcoDataCleaner:
         clean_df = self._identify_missing_values_(clean_df)
 
         # filling missing values
-        clean_df = self._fill_missing_values_(clean_df, ["TotalCharges", "Churn"])
+        clean_df = self._fill_missing_values_(clean_df, ["TotalCharges",
+                                                         "Churn"])
+
+        # getting masks
+        masks = self._get_masks_(clean_df)
 
         # Prepping predictors and target column
         preds, target = self._prep_data_(clean_df)
 
-        return {"clean_table": clean_df, "predictors": preds, "target": target}
+        return {"clean_table": clean_df,
+                "predictors": preds,
+                "target": target,
+                "masks": masks}
 
     # Converting numeric data types
     def _convert_data_types_(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -80,19 +87,24 @@ class telcoDataCleaner:
         logger.info("Converting gender")
 
         # Converting Internet Service to ordinal
-        df['InternetService'] = df['InternetService'].map({'DSL': 1, 'Fiber optic': 2, 'No': 0})
+        df['InternetService'] = df['InternetService'].map({'DSL': 1,
+                                                           'Fiber optic': 2,
+                                                           'No': 0})
         logger.info("Converting Internet Service")
 
         # Mutliple lines of service to binary
-        df["MultipleLines"] = df["MultipleLines"].map({"Yes": 1, "No": 0, "No phone service": 0})
+        df["MultipleLines"] = df["MultipleLines"].map({"Yes": 1,
+                                                       "No": 0,
+                                                       "No phone service": 0})
         logger.info("Converting Multiple Lines")
 
         # Converting Contract
         df = pd.get_dummies(df,
-                            columns=['Contract', 'PaymentMethod'],
+                            columns=['Contract',
+                                     'PaymentMethod'],
                             drop_first=True,
                             dtype=float)
-        logger.info("Created dummy columns from contract type and Payment Method")
+        logger.info("Created dummy columns for Contract and Payment Method")
 
         return df
 
@@ -146,10 +158,21 @@ class telcoDataCleaner:
     def _prep_data_(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
 
         exclude_cols = ["Churn", "customerID"]
-        
+
         predictors = df.loc[:, ~df.columns.isin(exclude_cols)]
 
         return predictors, df.loc[:, self.Target_column]
+
+    # Getting row masks for key datasets
+    def _get_masks_(self, df: pd.DataFrame) -> List:
+        '''Args
+                Dataframe to clean
+            Returns
+                Dictionary of row masks for key variables'''
+
+        internet_service_mask = (df["InternetService"] > 0).to_list()
+
+        return internet_service_mask
 
 
 def processTelcoData(raw_df):
