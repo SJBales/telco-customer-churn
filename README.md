@@ -15,3 +15,5 @@ This analysis has two objectives:
 ### Approach
 
 Load the customer churn data and preprocess using the custom class. Use logistic regression to predict the likelihood of each customer churning, regardless of internet usage.
+
+### Running the Code
