@@ -16,4 +16,12 @@ This analysis has two objectives:
 
 Load the customer churn data and preprocess using the custom class. Use logistic regression to predict the likelihood of each customer churning, regardless of internet usage.
 
-### Running the Code
+### Selection Criteria
+
+The best model will be selected using the "Churn Loss" custom loss function. Churn loss assumes a churned customer costs three times the intervention of contacting a possible churn. The best models will maximize the value of this function.
+
+### Models Tested
+
+- Logistic Regression
+- Random Forest
+- Support Vector Machine
