@@ -1,4 +1,4 @@
-# Predicting Teleco Customer Churn with Individual Predictions
+# Predicting Telco Customer Churn with Individual Predictions
 
 ### Overview
 
